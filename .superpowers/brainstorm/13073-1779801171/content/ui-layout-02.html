@@ -1,0 +1,465 @@
+<style>
+  .scene {
+    display: grid;
+    gap: 22px;
+  }
+
+  .note {
+    margin: 0;
+    color: #d8def7;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .bullet-list {
+    margin: 0;
+    padding-left: 18px;
+    color: #d8def7;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .sunset-shell {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0;
+    background:
+      linear-gradient(180deg, rgba(8, 10, 26, 0.12), rgba(8, 10, 26, 0.25)),
+      linear-gradient(180deg, #170b2c 0%, #291248 30%, #5a1f5f 56%, #b34b73 78%, #f39a61 100%);
+    box-shadow: inset 0 0 0 1px rgba(196, 181, 253, 0.18);
+    image-rendering: pixelated;
+  }
+
+  .sunset-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 14px),
+      linear-gradient(rgba(255,255,255,0.04) 0 2px, transparent 2px 14px);
+    opacity: 0.22;
+    pointer-events: none;
+  }
+
+  .mountains {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 52%;
+    background:
+      linear-gradient(135deg, transparent 0 18%, #2d1a49 18% 28%, transparent 28% 100%),
+      linear-gradient(225deg, transparent 0 16%, #22133a 16% 27%, transparent 27% 100%),
+      linear-gradient(150deg, transparent 0 25%, #35225a 25% 35%, transparent 35% 100%),
+      linear-gradient(210deg, transparent 0 31%, #1a102d 31% 45%, transparent 45% 100%),
+      linear-gradient(180deg, rgba(8, 10, 26, 0) 0%, rgba(8, 10, 26, 0.36) 100%);
+    image-rendering: pixelated;
+  }
+
+  .castle {
+    position: absolute;
+    right: 12%;
+    bottom: 22%;
+    width: 18%;
+    height: 28%;
+    background: #24163d;
+    box-shadow:
+      16px 0 0 0 #24163d,
+      32px -8px 0 0 #24163d,
+      48px 0 0 0 #24163d,
+      64px -14px 0 0 #24163d;
+    opacity: 0.92;
+  }
+
+  .stars {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 18% 22%, rgba(255,255,255,0.85) 0 1px, transparent 2px),
+      radial-gradient(circle at 34% 15%, rgba(255,255,255,0.7) 0 1px, transparent 2px),
+      radial-gradient(circle at 52% 28%, rgba(255,255,255,0.65) 0 1px, transparent 2px),
+      radial-gradient(circle at 74% 18%, rgba(255,255,255,0.7) 0 1px, transparent 2px),
+      radial-gradient(circle at 84% 30%, rgba(255,255,255,0.6) 0 1px, transparent 2px);
+    opacity: 0.85;
+  }
+
+  .glass {
+    background: rgba(15, 18, 40, 0.68);
+    backdrop-filter: blur(8px);
+    box-shadow:
+      inset 0 0 0 1px rgba(196, 181, 253, 0.24),
+      0 12px 40px rgba(7, 10, 24, 0.34);
+  }
+
+  .header-preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+    background: linear-gradient(180deg, rgba(9, 11, 24, 0.72), rgba(9, 11, 24, 0));
+  }
+
+  .brand {
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+    text-transform: uppercase;
+  }
+
+  .hero-shell {
+    min-height: 430px;
+    padding: 92px 28px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .hero-stack {
+    width: min(640px, 100%);
+    display: grid;
+    gap: 16px;
+    justify-items: center;
+  }
+
+  .hero-tag {
+    margin: 0;
+    color: #f3d4ff;
+    font-size: 13px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-shadow: 0 4px 14px rgba(0, 0, 0, 0.8);
+  }
+
+  .hero-title {
+    margin: 0;
+    color: #ffffff;
+    font-size: 72px;
+    line-height: 0.9;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-shadow: 0 6px 18px rgba(7, 10, 24, 0.85);
+  }
+
+  .hero-subtitle {
+    margin: 0;
+    max-width: 34ch;
+    color: #f1eefe;
+    font-size: 16px;
+    line-height: 1.7;
+    text-shadow: 0 4px 12px rgba(7, 10, 24, 0.8);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .pixel-btn {
+    padding: 12px 18px;
+    color: #f9f7ff;
+    font-size: 14px;
+    text-transform: uppercase;
+    background: rgba(14, 18, 38, 0.56);
+    box-shadow:
+      inset 0 0 0 1px rgba(196, 181, 253, 0.4),
+      0 10px 24px rgba(6, 8, 18, 0.28);
+  }
+
+  .pixel-btn.primary {
+    box-shadow:
+      inset 0 0 0 1px rgba(251, 146, 60, 0.65),
+      0 10px 24px rgba(6, 8, 18, 0.28);
+  }
+
+  .pixel-btn.secondary {
+    box-shadow:
+      inset 0 0 0 1px rgba(167, 139, 250, 0.62),
+      0 10px 24px rgba(6, 8, 18, 0.28);
+  }
+
+  .auction-shell {
+    min-height: 470px;
+    padding: 20px;
+    display: grid;
+    gap: 16px;
+  }
+
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    color: #fff;
+  }
+
+  .toolbar-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    padding: 10px 12px;
+    color: #f8f5ff;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+
+  .chip.purple {
+    box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.35);
+  }
+
+  .chip.orange {
+    box-shadow: inset 0 0 0 1px rgba(251, 146, 60, 0.38);
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .auction-card {
+    padding: 12px;
+    color: #f8f5ff;
+    display: grid;
+    gap: 10px;
+    box-shadow:
+      inset 0 0 0 1px rgba(99, 102, 241, 0.34),
+      0 10px 28px rgba(7, 10, 24, 0.24);
+  }
+
+  .art-frame {
+    height: 132px;
+    position: relative;
+    overflow: hidden;
+    background:
+      linear-gradient(180deg, rgba(135, 206, 235, 0.05), rgba(244, 114, 182, 0.18)),
+      linear-gradient(180deg, #24163d 0%, #362252 46%, #5b366e 76%, #f39a61 100%);
+    box-shadow: inset 0 0 0 1px rgba(244, 114, 182, 0.24);
+  }
+
+  .art-frame::before {
+    content: "";
+    position: absolute;
+    inset: auto 14px 18px 14px;
+    height: 28px;
+    background:
+      linear-gradient(135deg, transparent 0 12%, rgba(26, 16, 45, 0.95) 12% 28%, transparent 28% 100%),
+      linear-gradient(225deg, transparent 0 14%, rgba(34, 19, 58, 0.95) 14% 30%, transparent 30% 100%);
+    opacity: 0.9;
+  }
+
+  .art-frame::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 18px;
+    width: 22px;
+    height: 82px;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, #d6dae7 0%, #9aa4b8 100%);
+    box-shadow:
+      0 0 0 1px rgba(8, 10, 26, 0.7),
+      -10px 18px 0 -7px #f1d7ff,
+      10px 18px 0 -7px #f1d7ff;
+  }
+
+  .meta-row,
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .meta-row {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #ddd6fe;
+  }
+
+  .price-row {
+    font-size: 14px;
+    color: #fff7ed;
+  }
+
+  .coin {
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: middle;
+    background: linear-gradient(180deg, #ffd581, #fb923c);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+  }
+
+  .card-actions {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+  }
+
+  .action {
+    padding: 10px 12px;
+    font-size: 13px;
+    text-transform: uppercase;
+    text-align: center;
+    color: #faf7ff;
+    background: rgba(10, 14, 28, 0.52);
+  }
+
+  .action.bid {
+    box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.48);
+  }
+
+  .action.settle {
+    box-shadow: inset 0 0 0 1px rgba(251, 146, 60, 0.52);
+  }
+
+  .action.tag {
+    min-width: 78px;
+    color: #e9d5ff;
+    box-shadow: inset 0 0 0 1px rgba(244, 114, 182, 0.36);
+  }
+
+  .callouts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .callout {
+    padding: 14px;
+    color: #fff;
+    box-shadow: inset 0 0 0 1px rgba(196, 181, 253, 0.2);
+  }
+
+  @media (max-width: 920px) {
+    .hero-title {
+      font-size: 54px;
+    }
+
+    .card-grid,
+    .callouts {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<h2>Twilight Pixel Direction</h2>
+<p class="subtitle">Revised art direction: indie fantasy pixel-art, sunset sky, glassy dark panels, thin indigo-violet borders, no heavy black framing.</p>
+
+<div class="scene">
+  <div class="mockup">
+    <div class="mockup-header">Home / Atmospheric Hero Over Fullscreen Background</div>
+    <div class="mockup-body">
+      <div class="sunset-shell hero-shell">
+        <div class="stars"></div>
+        <div class="mountains"></div>
+        <div class="castle"></div>
+        <div class="header-preview">
+          <div class="brand">Bankeer</div>
+          <div class="nav">
+            <span>Home</span>
+            <span>Auction</span>
+            <span>0xA81E...4C2F</span>
+          </div>
+        </div>
+        <div class="hero-stack">
+          <p class="hero-tag">Twilight Market / Localhost 8545</p>
+          <h3 class="hero-title">BANKEER</h3>
+          <p class="hero-subtitle">A fantasy auction hall rendered like modern indie pixel art: soft glow, dark glass panels, and sharp pixel silhouettes.</p>
+          <div class="hero-actions">
+            <div class="pixel-btn primary">Enter Game</div>
+            <div class="pixel-btn secondary">Connect Wallet</div>
+          </div>
+          <p class="note">Content floats directly over the scene. No boxed hero slab. Mobile keeps the same centered composition with stacked buttons.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">Auction / Glass Cards Over Shared Background</div>
+    <div class="mockup-body">
+      <div class="sunset-shell auction-shell">
+        <div class="stars"></div>
+        <div class="mountains"></div>
+        <div class="toolbar">
+          <div class="toolbar-group">
+            <div class="chip glass purple">Open Lots: 6</div>
+            <div class="chip glass purple">IPFS Cached</div>
+          </div>
+          <div class="chip glass orange">220 COIN / Wallet Connected</div>
+        </div>
+        <div class="card-grid">
+          <div class="auction-card glass">
+            <div class="art-frame"></div>
+            <div class="meta-row"><span>Iron Fang</span><span>02:14:33</span></div>
+            <div class="price-row"><span><span class="coin"></span>120 COIN</span><span>Bid</span></div>
+            <div class="card-actions">
+              <div class="action bid">Approve / Bid</div>
+              <div class="action tag">Live</div>
+            </div>
+          </div>
+          <div class="auction-card glass">
+            <div class="art-frame"></div>
+            <div class="meta-row"><span>Moon Edge</span><span>00:00:00</span></div>
+            <div class="price-row"><span><span class="coin"></span>175 COIN</span><span>Settle</span></div>
+            <div class="card-actions">
+              <div class="action settle">Resolve Auction</div>
+              <div class="action tag">Ready</div>
+            </div>
+          </div>
+          <div class="auction-card glass">
+            <div class="art-frame"></div>
+            <div class="meta-row"><span>Bronze Pike</span><span>08:52:01</span></div>
+            <div class="price-row"><span><span class="coin"></span>85 COIN</span><span>Bid</span></div>
+            <div class="card-actions">
+              <div class="action bid">Place Bid</div>
+              <div class="action tag">Open</div>
+            </div>
+          </div>
+        </div>
+        <p class="note">Cards stay dark and translucent. Tablet collapses to 2 columns, mobile to 1. All controls keep thin accent borders instead of solid fills.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callouts">
+    <div class="callout glass">
+      <h3>Style Rules</h3>
+      <ul class="bullet-list">
+        <li>Fullscreen pixel-art backdrop with <code>bg-cover bg-center bg-no-repeat</code> and pixelated rendering.</li>
+        <li>Panels use translucent navy-violet glass, not opaque blocks.</li>
+        <li>Typography stays mono, white, large, and glow-assisted for readability.</li>
+      </ul>
+    </div>
+    <div class="callout glass">
+      <h3>Component Rules</h3>
+      <ul class="bullet-list">
+        <li>Header becomes transparent or a top fade gradient, without visible borders.</li>
+        <li>Buttons and cards share the same thin purple-indigo outline language.</li>
+        <li>Toasts and loaders should inherit the same dark translucent panel style.</li>
+      </ul>
+    </div>
+  </div>
+</div>

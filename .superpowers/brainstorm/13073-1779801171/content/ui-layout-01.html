@@ -1,0 +1,393 @@
+<style>
+  .pixel-stage {
+    display: grid;
+    gap: 24px;
+  }
+
+  .pixel-note {
+    margin: 0;
+    color: #9fb0c8;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .pixel-list {
+    margin: 0;
+    padding-left: 18px;
+    color: #cfd8e8;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .pixel-frame {
+    border: 4px solid #0f172a;
+    box-shadow: 8px 8px 0 #0f172a;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0)) padding-box,
+      repeating-linear-gradient(
+        0deg,
+        #20334f 0 8px,
+        #243a5a 8px 16px
+      );
+    image-rendering: pixelated;
+    overflow: hidden;
+  }
+
+  .hero-shell {
+    min-height: 350px;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .hero-copy {
+    border: 4px solid #0f172a;
+    background: #f6d36a;
+    color: #0f172a;
+    padding: 18px;
+    display: grid;
+    gap: 14px;
+    align-content: start;
+  }
+
+  .hero-kicker {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .hero-title {
+    margin: 0;
+    font-size: 56px;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .hero-subtitle {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+    max-width: 28ch;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .hero-button {
+    border: 4px solid #0f172a;
+    background: #fcfaf3;
+    padding: 10px 14px;
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+
+  .hero-button.alt {
+    background: #8be0c1;
+  }
+
+  .hero-art {
+    border: 4px solid #0f172a;
+    background:
+      linear-gradient(180deg, #8ec5ff 0 45%, #4b7bb8 45% 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sun {
+    position: absolute;
+    width: 62px;
+    height: 62px;
+    background: #ffd36a;
+    top: 18px;
+    right: 22px;
+    border: 4px solid #0f172a;
+  }
+
+  .tower {
+    position: absolute;
+    bottom: 0;
+    left: 18%;
+    width: 40%;
+    height: 62%;
+    background: #cbd3dd;
+    border-left: 4px solid #0f172a;
+    border-right: 4px solid #0f172a;
+    border-top: 4px solid #0f172a;
+  }
+
+  .tower::before,
+  .tower::after {
+    content: "";
+    position: absolute;
+    background: #9aabbd;
+    border: 4px solid #0f172a;
+  }
+
+  .tower::before {
+    width: 26%;
+    height: 24%;
+    left: -18%;
+    bottom: 0;
+  }
+
+  .tower::after {
+    width: 26%;
+    height: 33%;
+    right: -18%;
+    bottom: 0;
+  }
+
+  .ground {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 24%;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        #5a8d3f 0 14px,
+        #6aa449 14px 28px
+      );
+    border-top: 4px solid #0f172a;
+  }
+
+  .auction-shell {
+    min-height: 420px;
+    padding: 18px;
+    display: grid;
+    gap: 16px;
+    background:
+      repeating-linear-gradient(
+        45deg,
+        #162238 0 16px,
+        #1a2942 16px 32px
+      );
+  }
+
+  .auction-toolbar {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .stat-boxes {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .stat-box,
+  .wallet-box {
+    border: 4px solid #0f172a;
+    background: #f8f1dc;
+    color: #0f172a;
+    padding: 10px 12px;
+    font-size: 13px;
+    text-transform: uppercase;
+  }
+
+  .auction-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .auction-card {
+    border: 4px solid #0f172a;
+    background: #f8f1dc;
+    color: #0f172a;
+    padding: 10px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .thumb {
+    height: 116px;
+    border: 4px solid #0f172a;
+    background:
+      linear-gradient(180deg, #bfe6ff, #89bddf);
+    position: relative;
+  }
+
+  .thumb::before {
+    content: "";
+    position: absolute;
+    inset: 20px 34px;
+    background: #d1d5db;
+    border: 4px solid #0f172a;
+    transform: skew(-6deg);
+  }
+
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+
+  .price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  .coin {
+    width: 16px;
+    height: 16px;
+    border: 3px solid #0f172a;
+    background: #ffd36a;
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  .card-actions {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+  }
+
+  .primary-action,
+  .secondary-action {
+    border: 4px solid #0f172a;
+    padding: 8px 10px;
+    font-size: 13px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .primary-action {
+    background: #8be0c1;
+  }
+
+  .secondary-action {
+    background: #ffd36a;
+    min-width: 72px;
+  }
+
+  .callout-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .callout {
+    border: 3px solid #324766;
+    background: #132035;
+    padding: 14px;
+  }
+
+  @media (max-width: 900px) {
+    .hero-shell,
+    .callout-grid,
+    .auction-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-title {
+      font-size: 42px;
+    }
+  }
+</style>
+
+<h2>Pixel UI Direction</h2>
+<p class="subtitle">Recommended layout for cycle 1: strong 16-bit landing page and dense but readable auction grid.</p>
+
+<div class="pixel-stage">
+  <div class="mockup">
+    <div class="mockup-header">Home / Desktop-to-Mobile Behavior</div>
+    <div class="mockup-body">
+      <div class="pixel-frame hero-shell">
+        <div class="hero-copy">
+          <div class="hero-kicker">Localhost 8545 / Bankeer</div>
+          <h3 class="hero-title">Bankeer</h3>
+          <p class="hero-subtitle">Pixel-art auction house for swords, bids, and fast wallet-driven game entry.</p>
+          <div class="hero-actions">
+            <div class="hero-button alt">Enter Game</div>
+            <div class="hero-button">Connect Wallet</div>
+          </div>
+          <p class="pixel-note">Mobile: text block stacks first, art panel drops below, action buttons become full-width.</p>
+        </div>
+        <div class="hero-art">
+          <div class="sun"></div>
+          <div class="tower"></div>
+          <div class="ground"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">Auction / Responsive Card Grid</div>
+    <div class="mockup-body">
+      <div class="pixel-frame auction-shell">
+        <div class="auction-toolbar">
+          <div class="stat-boxes">
+            <div class="stat-box">Open lots: 6</div>
+            <div class="stat-box">Gateway: IPFS</div>
+          </div>
+          <div class="wallet-box">0xA81E...4C2F / 220 COIN</div>
+        </div>
+        <div class="auction-grid">
+          <div class="auction-card">
+            <div class="thumb"></div>
+            <div class="meta-row"><span>Iron Fang</span><span>02:14:33</span></div>
+            <div class="price-row"><span><span class="coin"></span>120 COIN</span><span>Bid</span></div>
+            <div class="card-actions">
+              <div class="primary-action">Bid / Approve if needed</div>
+              <div class="secondary-action">View</div>
+            </div>
+          </div>
+          <div class="auction-card">
+            <div class="thumb"></div>
+            <div class="meta-row"><span>Moon Edge</span><span>00:00:00</span></div>
+            <div class="price-row"><span><span class="coin"></span>175 COIN</span><span>Settle</span></div>
+            <div class="card-actions">
+              <div class="primary-action">Resolve Auction</div>
+              <div class="secondary-action">Ready</div>
+            </div>
+          </div>
+          <div class="auction-card">
+            <div class="thumb"></div>
+            <div class="meta-row"><span>Bronze Pike</span><span>08:52:01</span></div>
+            <div class="price-row"><span><span class="coin"></span>85 COIN</span><span>Bid</span></div>
+            <div class="card-actions">
+              <div class="primary-action">Place Bid</div>
+              <div class="secondary-action">Live</div>
+            </div>
+          </div>
+        </div>
+        <p class="pixel-note">Desktop: 3 columns. Tablet: 2 columns. Mobile: 1 column. Card action area stays large enough for touch targets.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout-grid">
+    <div class="callout">
+      <h3>UI Rules</h3>
+      <ul class="pixel-list">
+        <li>Monospace everywhere, uppercase labels, no rounded corners.</li>
+        <li>Instant hover state changes, no soft gradients in controls.</li>
+        <li>Every image and tiled background uses <code>[image-rendering:pixelated]</code>.</li>
+      </ul>
+    </div>
+    <div class="callout">
+      <h3>Interaction Rules</h3>
+      <ul class="pixel-list">
+        <li>Header keeps burger menu on mobile and direct nav on desktop.</li>
+        <li>Approve, bid, and settle states show a pixel loader and then a small toast.</li>
+        <li>Expired open auctions stay visible and switch primary action to <code>Settle</code>.</li>
+      </ul>
+    </div>
+  </div>
+</div>

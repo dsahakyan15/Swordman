@@ -1,0 +1,442 @@
+<style>
+  .scene {
+    display: grid;
+    gap: 22px;
+  }
+
+  .note {
+    margin: 0;
+    color: #d8def7;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .bullet-list {
+    margin: 0;
+    padding-left: 18px;
+    color: #d8def7;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .page-shell {
+    position: relative;
+    overflow: hidden;
+    min-height: 450px;
+    box-shadow: inset 0 0 0 1px rgba(196, 181, 253, 0.16);
+  }
+
+  .bg-layer {
+    position: absolute;
+    inset: 0;
+    image-rendering: pixelated;
+    pointer-events: none;
+  }
+
+  .sky {
+    z-index: -3;
+    background: url("sky.png") center center / cover no-repeat;
+  }
+
+  .clouds {
+    z-index: -2;
+    background:
+      linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+      url("clouds.png") center 18% / contain no-repeat;
+    animation: drift 28s linear infinite;
+  }
+
+  .castle {
+    z-index: -1;
+    background: url("castle.png") center bottom / cover no-repeat;
+  }
+
+  @keyframes drift {
+    0% { transform: translateX(-3%); }
+    50% { transform: translateX(3%); }
+    100% { transform: translateX(-3%); }
+  }
+
+  .header-preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.72);
+    background: linear-gradient(180deg, rgba(9, 11, 24, 0.68), rgba(9, 11, 24, 0));
+  }
+
+  .brand {
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+    text-transform: uppercase;
+  }
+
+  .hero-shell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 96px 28px 40px;
+  }
+
+  .hero-stack {
+    position: relative;
+    z-index: 10;
+    width: min(720px, 100%);
+    display: grid;
+    gap: 16px;
+    justify-items: center;
+  }
+
+  .hero-tag {
+    margin: 0;
+    color: #f3d4ff;
+    font-size: 13px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-shadow: 0 4px 14px rgba(0, 0, 0, 0.8);
+  }
+
+  .hero-title {
+    margin: 0;
+    color: #fff;
+    font-size: 72px;
+    line-height: 0.9;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-shadow: 0 6px 18px rgba(7, 10, 24, 0.85);
+  }
+
+  .hero-subtitle {
+    margin: 0;
+    max-width: 34ch;
+    color: #f1eefe;
+    font-size: 16px;
+    line-height: 1.7;
+    text-shadow: 0 4px 12px rgba(7, 10, 24, 0.82);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .pixel-btn {
+    padding: 12px 18px;
+    color: #f9f7ff;
+    font-size: 14px;
+    text-transform: uppercase;
+    background: rgba(14, 18, 38, 0.5);
+    backdrop-filter: blur(8px);
+    box-shadow:
+      inset 0 0 0 1px rgba(196, 181, 253, 0.42),
+      0 10px 24px rgba(6, 8, 18, 0.24);
+  }
+
+  .pixel-btn.primary {
+    box-shadow:
+      inset 0 0 0 1px rgba(251, 146, 60, 0.62),
+      0 10px 24px rgba(6, 8, 18, 0.24);
+  }
+
+  .pixel-btn.secondary {
+    box-shadow:
+      inset 0 0 0 1px rgba(167, 139, 250, 0.58),
+      0 10px 24px rgba(6, 8, 18, 0.24);
+  }
+
+  .hero-slots {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    width: min(420px, 100%);
+    margin-top: 4px;
+  }
+
+  .slot {
+    aspect-ratio: 1 / 1;
+    background: rgba(10, 14, 28, 0.58);
+    backdrop-filter: blur(8px);
+    box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.3);
+    image-rendering: pixelated;
+  }
+
+  .auction-shell {
+    padding: 20px;
+    display: grid;
+    gap: 16px;
+  }
+
+  .toolbar {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    color: #fff;
+  }
+
+  .toolbar-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .glass {
+    background: rgba(10, 14, 28, 0.58);
+    backdrop-filter: blur(8px);
+    box-shadow:
+      inset 0 0 0 1px rgba(129, 140, 248, 0.28),
+      0 12px 32px rgba(7, 10, 24, 0.28);
+  }
+
+  .chip {
+    padding: 10px 12px;
+    color: #f8f5ff;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+
+  .chip.purple {
+    box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.35);
+  }
+
+  .chip.orange {
+    box-shadow: inset 0 0 0 1px rgba(251, 146, 60, 0.38);
+  }
+
+  .card-grid {
+    position: relative;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .auction-card {
+    padding: 12px;
+    color: #f8f5ff;
+    display: grid;
+    gap: 10px;
+  }
+
+  .art-frame {
+    width: 128px;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+    background: rgba(12, 16, 30, 0.72);
+    box-shadow: inset 0 0 0 1px rgba(244, 114, 182, 0.24);
+    image-rendering: pixelated;
+  }
+
+  .meta-row,
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .meta-row {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #ddd6fe;
+  }
+
+  .price-row {
+    font-size: 14px;
+    color: #fff7ed;
+  }
+
+  .coin {
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: middle;
+    background: linear-gradient(180deg, #ffd581, #fb923c);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+  }
+
+  .card-actions {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+  }
+
+  .action {
+    padding: 10px 12px;
+    font-size: 13px;
+    text-transform: uppercase;
+    text-align: center;
+    color: #faf7ff;
+    background: rgba(10, 14, 28, 0.52);
+  }
+
+  .action.bid {
+    box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.48);
+  }
+
+  .action.settle {
+    box-shadow: inset 0 0 0 1px rgba(251, 146, 60, 0.52);
+  }
+
+  .action.tag {
+    min-width: 78px;
+    color: #e9d5ff;
+    box-shadow: inset 0 0 0 1px rgba(244, 114, 182, 0.36);
+  }
+
+  .callouts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .callout {
+    padding: 14px;
+    color: #fff;
+    box-shadow: inset 0 0 0 1px rgba(196, 181, 253, 0.2);
+  }
+
+  @media (max-width: 920px) {
+    .hero-title {
+      font-size: 54px;
+    }
+
+    .card-grid,
+    .callouts {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-slots {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>
+
+<h2>Layered Pixel Background</h2>
+<p class="subtitle">Updated direction: real multi-layer backdrop from your local assets, with moving cloud layer and all content pinned above it.</p>
+
+<div class="scene">
+  <div class="mockup">
+    <div class="mockup-header">Home / 3-Layer Parallax Background</div>
+    <div class="mockup-body">
+      <div class="page-shell hero-shell">
+        <div class="bg-layer sky"></div>
+        <div class="bg-layer clouds"></div>
+        <div class="bg-layer castle"></div>
+        <div class="header-preview">
+          <div class="brand">Bankeer</div>
+          <div class="nav">
+            <span>Home</span>
+            <span>Auction</span>
+            <span>0xA81E...4C2F</span>
+          </div>
+        </div>
+        <div class="hero-stack">
+          <p class="hero-tag">Twilight Market / Localhost 8545</p>
+          <h3 class="hero-title">BANKEER</h3>
+          <p class="hero-subtitle">A fantasy auction hall rendered like modern indie pixel art: soft glow, dark glass panels, and layered sunset scenery.</p>
+          <div class="hero-actions">
+            <div class="pixel-btn primary">Enter Game</div>
+            <div class="pixel-btn secondary">Connect Wallet</div>
+          </div>
+          <div class="hero-slots">
+            <div class="slot"></div>
+            <div class="slot"></div>
+            <div class="slot"></div>
+          </div>
+          <p class="note">Foreground content is isolated in a `relative z-10` stack. All three background layers sit underneath with absolute positioning.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">Auction / Glass Grid Over Same Background System</div>
+    <div class="mockup-body">
+      <div class="page-shell auction-shell">
+        <div class="bg-layer sky"></div>
+        <div class="bg-layer clouds"></div>
+        <div class="bg-layer castle"></div>
+        <div class="toolbar">
+          <div class="toolbar-group">
+            <div class="chip glass purple">Open Lots: 6</div>
+            <div class="chip glass purple">IPFS Cached</div>
+          </div>
+          <div class="chip glass orange">220 COIN / Wallet Connected</div>
+        </div>
+        <div class="card-grid">
+          <div class="auction-card glass">
+            <div class="art-frame"></div>
+            <div class="meta-row"><span>Iron Fang</span><span>02:14:33</span></div>
+            <div class="price-row"><span><span class="coin"></span>120 COIN</span><span>Bid</span></div>
+            <div class="card-actions">
+              <div class="action bid">Approve / Bid</div>
+              <div class="action tag">Live</div>
+            </div>
+          </div>
+          <div class="auction-card glass">
+            <div class="art-frame"></div>
+            <div class="meta-row"><span>Moon Edge</span><span>00:00:00</span></div>
+            <div class="price-row"><span><span class="coin"></span>175 COIN</span><span>Settle</span></div>
+            <div class="card-actions">
+              <div class="action settle">Resolve Auction</div>
+              <div class="action tag">Ready</div>
+            </div>
+          </div>
+          <div class="auction-card glass">
+            <div class="art-frame"></div>
+            <div class="meta-row"><span>Bronze Pike</span><span>08:52:01</span></div>
+            <div class="price-row"><span><span class="coin"></span>85 COIN</span><span>Bid</span></div>
+            <div class="card-actions">
+              <div class="action bid">Place Bid</div>
+              <div class="action tag">Open</div>
+            </div>
+          </div>
+        </div>
+        <p class="note">Auction keeps the same glass cards and square slots, now over the identical 3-layer background stack for consistent atmosphere.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callouts">
+    <div class="callout glass">
+      <h3>Tailwind Mapping</h3>
+      <ul class="bullet-list">
+        <li>Sky layer: <code>absolute inset-0 z-[-3] bg-[url('/sky.png')] bg-cover bg-center [image-rendering:pixelated]</code></li>
+        <li>Cloud layer: <code>absolute inset-0 z-[-2] bg-[url('/clouds.png')] bg-contain bg-no-repeat bg-center bg-black/20 [image-rendering:pixelated]</code></li>
+        <li>Castle layer: <code>absolute inset-0 z-[-1] bg-[url('/castle.png')] bg-cover bg-center bg-bottom [image-rendering:pixelated]</code></li>
+      </ul>
+    </div>
+    <div class="callout glass">
+      <h3>Component Rules</h3>
+      <ul class="bullet-list">
+        <li>Header stays transparent with white nav text and soft shadow.</li>
+        <li>Hero content container must remain <code>relative z-10</code>.</li>
+        <li>Hero slots and auction art slots both use <code>aspect-square mx-auto [image-rendering:pixelated]</code>.</li>
+      </ul>
+    </div>
+  </div>
+</div>
