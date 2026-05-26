@@ -1,22 +1,28 @@
 @import "tailwindcss";
 
-html {
+html,
+body,
+#root {
   min-height: 100%;
 }
 
 body {
-  min-height: 100vh;
   margin: 0;
-  background: #8ec5ff;
-  color: #f8fafc;
-  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  background: #070b18;
+  color: #ffffff;
+  font-family: "Courier New", Courier, monospace;
 }
 
-body,
-#root {
-  min-height: 100vh;
-}
+@keyframes clouds {
+  0% {
+    transform: translateX(-3%);
+  }
 
-#root {
-  isolation: isolate;
+  50% {
+    transform: translateX(3%);
+  }
+
+  100% {
+    transform: translateX(-3%);
+  }
 }
