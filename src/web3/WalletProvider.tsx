@@ -1,4 +1,7 @@
+/* eslint-disable react-refresh/only-export-components */
+
 import {
+  useCallback,
   createContext,
   useContext,
   useEffect,
@@ -34,7 +37,7 @@ const WalletContext = createContext<WalletContextValue | null>(null)
 export function WalletProvider({ children }: PropsWithChildren) {
   const [walletState, setWalletState] = useState<WalletState>(emptyWalletState)
 
-  async function syncFromProvider() {
+  const syncFromProvider = useCallback(async () => {
     if (!window.ethereum) {
       setWalletState(emptyWalletState)
       return
@@ -54,9 +57,9 @@ export function WalletProvider({ children }: PropsWithChildren) {
       address: accounts[0] ?? '',
       status,
     })
-  }
+  }, [])
 
-  async function connect() {
+  const connect = useCallback(async () => {
     if (!window.ethereum) {
       throw new Error('MetaMask is not installed')
     }
@@ -66,9 +69,9 @@ export function WalletProvider({ children }: PropsWithChildren) {
     const provider = new BrowserProvider(window.ethereum)
     await provider.send('eth_requestAccounts', [])
     await syncFromProvider()
-  }
+  }, [syncFromProvider])
 
-  async function switchToLocalhost() {
+  const switchToLocalhost = useCallback(async () => {
     if (!window.ethereum?.request) {
       throw new Error('MetaMask is not installed')
     }
@@ -97,11 +100,17 @@ export function WalletProvider({ children }: PropsWithChildren) {
     }
 
     await syncFromProvider()
-  }
+  }, [syncFromProvider])
 
   useEffect(() => {
-    void syncFromProvider()
-  }, [])
+    const timeoutId = window.setTimeout(() => {
+      void syncFromProvider()
+    }, 0)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+    }
+  }, [syncFromProvider])
 
   const value = useMemo(
     () => ({
@@ -110,7 +119,7 @@ export function WalletProvider({ children }: PropsWithChildren) {
       switchToLocalhost,
       refreshWallet: syncFromProvider,
     }),
-    [walletState],
+    [walletState, connect, switchToLocalhost, syncFromProvider],
   )
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>

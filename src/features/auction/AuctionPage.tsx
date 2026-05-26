@@ -39,8 +39,6 @@ export function AuctionPage() {
 
     if (auctions.length > 0) {
       void loadItemMetadata()
-    } else {
-      setMetaById({})
     }
 
     return () => {
