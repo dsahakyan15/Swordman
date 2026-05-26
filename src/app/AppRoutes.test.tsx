@@ -11,9 +11,11 @@ describe('AppRoutes', () => {
       </MemoryRouter>,
     )
 
-    expect(
-      screen.getByRole('heading', { level: 1, name: 'BANKEER' }),
-    ).toBeInTheDocument()
+    const shell = screen.getByTestId('app-shell')
+    const heading = screen.getByRole('heading', { level: 1, name: 'BANKEER' })
+
+    expect(shell).toContainElement(heading)
+    expect(screen.getByRole('main')).toBeInTheDocument()
   })
 
   it('renders the auction page at /auction', () => {
@@ -23,8 +25,13 @@ describe('AppRoutes', () => {
       </MemoryRouter>,
     )
 
-    expect(
-      screen.getByRole('heading', { level: 1, name: 'Auction House' }),
-    ).toBeInTheDocument()
+    const shell = screen.getByTestId('app-shell')
+    const heading = screen.getByRole('heading', {
+      level: 1,
+      name: 'Auction House',
+    })
+
+    expect(shell).toContainElement(heading)
+    expect(screen.getByRole('main')).toBeInTheDocument()
   })
 })

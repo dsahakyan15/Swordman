@@ -2,7 +2,10 @@ import { Outlet } from 'react-router-dom'
 
 export function AppShell() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-sky-300">
+    <div
+      data-testid="app-shell"
+      className="relative min-h-screen overflow-hidden bg-sky-300"
+    >
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
