@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -7,6 +7,7 @@ import { HomePage } from './HomePage'
 const mocks = vi.hoisted(() => ({
   connect: vi.fn(),
   navigate: vi.fn(),
+  pushToast: vi.fn(),
 }))
 
 vi.mock('react-router-dom', async () => {
@@ -24,10 +25,17 @@ vi.mock('../../web3/useWallet', () => ({
   }),
 }))
 
+vi.mock('../../components/pixel/ToastProvider', () => ({
+  useToasts: () => ({
+    pushToast: mocks.pushToast,
+  }),
+}))
+
 describe('HomePage', () => {
   beforeEach(() => {
     mocks.connect.mockReset()
     mocks.navigate.mockReset()
+    mocks.pushToast.mockReset()
   })
 
   it('renders the hero copy, actions, and placeholder slots', () => {
@@ -65,5 +73,21 @@ describe('HomePage', () => {
     fireEvent.click(screen.getByRole('button', { name: /connect wallet/i }))
 
     expect(mocks.connect).toHaveBeenCalledTimes(1)
+  })
+
+  it('shows an error toast when wallet connection fails', async () => {
+    mocks.connect.mockRejectedValueOnce(new Error('Wallet rejected'))
+
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: /connect wallet/i }))
+
+    await waitFor(() => {
+      expect(mocks.pushToast).toHaveBeenCalledWith('Wallet rejected', 'error')
+    })
   })
 })

@@ -1,11 +1,21 @@
 import { useNavigate } from 'react-router-dom'
 
 import { PixelButton } from '../../components/pixel/PixelButton'
+import { useToasts } from '../../components/pixel/ToastProvider'
 import { useWallet } from '../../web3/useWallet'
 
 export function HomePage() {
   const navigate = useNavigate()
+  const { pushToast } = useToasts()
   const { connect } = useWallet()
+
+  async function handleConnect() {
+    try {
+      await connect()
+    } catch (error) {
+      pushToast(error instanceof Error ? error.message : 'Unable to connect wallet', 'error')
+    }
+  }
 
   return (
     <section className="flex min-h-[calc(100vh-72px)] items-center justify-center px-4 py-12 text-center md:px-8">
@@ -24,7 +34,7 @@ export function HomePage() {
           <PixelButton variant="primary" fullWidth onClick={() => navigate('/auction')}>
             Enter Game
           </PixelButton>
-          <PixelButton variant="secondary" fullWidth onClick={connect}>
+          <PixelButton variant="secondary" fullWidth onClick={() => void handleConnect()}>
             Connect Wallet
           </PixelButton>
         </div>
