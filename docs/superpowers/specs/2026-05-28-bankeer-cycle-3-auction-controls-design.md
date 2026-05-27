@@ -2,11 +2,13 @@
 
 ## Goal
 
-Cycle 3 adds only the requested interaction polish and auction creation flow:
+Cycle 3 adds only the requested interaction polish and auction flow:
 
 - configurable contract addresses with localhost fallbacks
 - working home page buttons
 - portfolio item auction creation for owned items
+- buying through `Auction.buyRequest(aucId, amount)`
+- closing expired deals through `Auction.resolveAuc(aucId)`
 - hover glow on auction and inventory cards
 
 No new pages, route guards, marketplace filters, auction cancellation UI, or unrelated visual redesigns are included.
@@ -55,6 +57,23 @@ Submitting the form will:
 
 The form is local to the selected card. If transaction submission fails or the user rejects the wallet prompt, the existing transaction error normalization behavior is reused.
 
+## Auction Buying and Closing
+
+The existing `/auction` route remains the place to interact with open auctions.
+
+For auctions whose time has not expired:
+
+- the card exposes the existing buy/bid action
+- submitting uses `Auction.buyRequest(aucId, amount)`
+- the amount defaults to the current next valid bid amount already shown by the UI
+
+For auctions whose time has expired:
+
+- the card exposes a close/settle action instead of buy/bid
+- submitting uses `Auction.resolveAuc(aucId)`
+
+After a successful buy or close transaction, the auction list refreshes. Wallet rejection and contract errors use the existing toast/error normalization behavior.
+
 ## Hover Glow
 
 Auction and inventory cards receive a restrained hover/focus glow:
@@ -70,6 +89,8 @@ Focused tests will cover:
 - env address fallback behavior in contract config
 - home buttons navigate/connect
 - auction creation calls approval before `createAuc` when required
+- auction buying calls `buyRequest`
+- expired auction closing calls `resolveAuc`
 - inventory card exposes the icon button with `title="Create Auction"`
 
 Existing tests remain in place. Cycle 3 does not address unrelated current failures unless they block the new focused test run.
