@@ -8,7 +8,10 @@ Included:
 
 - `/portfolio` route
 - portfolio navigation link in `PixelHeader`
-- config-driven ERC-1155 inventory scan using `INVENTORY_TOKEN_IDS`
+- working mobile navigation menu with links to `Home`, `Auction`, and `Portfolio`
+- config-driven ERC-1155 inventory scan using `INVENTORY_ITEM_IDS`
+- explicit `COIN_ID = 1` configuration
+- EIP-1155-compliant `{id}` URI expansion in `ipfsHelper`
 - wallet-gated profile panel
 - COIN balance display for token `id = 1`
 - inventory grid for owned item tokens where `id > 1`
@@ -41,25 +44,34 @@ Update `PixelHeader` desktop navigation:
 - `Auction`
 - `Portfolio`
 
-The existing mobile menu button may remain a non-expanded placeholder for this cycle. It must not block access to `/portfolio` on desktop.
+Update `PixelHeader` mobile navigation:
+
+- the existing burger button must open and close a dropdown menu
+- the dropdown must contain links to `Home`, `Auction`, and `Portfolio`
+- selecting a link should close the menu
+- mobile users must be able to reach `/portfolio` without manually typing the URL
 
 ## Configuration
 
-Add `INVENTORY_TOKEN_IDS` to `src/config/contracts.ts`.
+Add explicit token constants to `src/config/contracts.ts`.
 
 Example initial value:
 
 ```ts
-export const INVENTORY_TOKEN_IDS = [1, 2, 3, 4, 5] as const
+export const COIN_ID = 1
+export const INVENTORY_ITEM_IDS = [2, 3, 4, 5] as const
 ```
 
-The list is the only source of token IDs scanned by `/portfolio`.
+`COIN_ID` is the only source of the currency token ID.
+
+`INVENTORY_ITEM_IDS` is the only source of item token IDs scanned by `/portfolio`.
 
 Rules:
 
-- `id = 1` is COIN.
-- IDs greater than `1` are renderable inventory items.
-- The list is manually maintained until the contract exposes token discovery.
+- `COIN_ID` is always included in the `balanceOfBatch` request by `usePortfolioInventory`.
+- `INVENTORY_ITEM_IDS` must not include COIN.
+- item IDs are renderable inventory items.
+- the item list is manually maintained until the contract exposes token discovery.
 
 ## Contract Model
 
@@ -131,13 +143,23 @@ Metadata is loaded with the existing `Bankeer.uri(id)` plus `fetchTokenMetadata(
 
 ### Metadata Behavior
 
-Use the existing `ipfsHelper` for:
+Update and use the existing `ipfsHelper` for:
 
 - `{id}` URI expansion
 - IPFS gateway conversion
 - metadata fetch
 - image URL normalization
 - in-memory memoization
+
+EIP-1155 URI rule:
+
+- when expanding `{id}`, convert the token ID to lowercase hexadecimal
+- remove any `0x` prefix
+- left-pad with zeroes to exactly 64 characters
+- example: token ID `1` becomes `0000000000000000000000000000000000000000000000000000000000000001`
+- example: token ID `15` becomes `000000000000000000000000000000000000000000000000000000000000000f`
+
+This Cycle 2 implementation must update the existing Cycle 1 `expandTokenUri` behavior. Decimal replacement is not acceptable for ERC-1155 metadata templates.
 
 If item metadata fails:
 
@@ -240,6 +262,7 @@ Responsibilities:
 - `usePortfolioInventory.ts`
   - read Bankeer through `getReadBankeerContract`
   - call `balanceOfBatch`
+  - construct batch IDs as `[COIN_ID, ...INVENTORY_ITEM_IDS]`
   - load COIN and item metadata
   - expose normalized loading, error, coin, and item state
 - `PortfolioPage.tsx`
@@ -255,8 +278,11 @@ Responsibilities:
 
 Add focused tests for:
 
+- EIP-1155 `{id}` expansion in `ipfsHelper` using 64-character lowercase hex
 - `buildBalanceOfBatchRequest(account, ids)`
+- portfolio batch IDs include `COIN_ID` even when item IDs come from `INVENTORY_ITEM_IDS`
 - inventory filtering: only `id > 1` with balance greater than zero
+- mobile header menu opens and exposes the `Portfolio` link
 - disconnected `PortfolioPage` state
 - connected `PortfolioPage` rendering of COIN balance and owned items with mocked hooks
 - route registration for `/portfolio`
@@ -272,7 +298,7 @@ Manual verification should include:
 - `/portfolio` with disconnected wallet
 - `/portfolio` with connected local wallet
 - COIN balance display
-- at least one owned item rendered from `INVENTORY_TOKEN_IDS`
+- at least one owned item rendered from `INVENTORY_ITEM_IDS`
 
 ## Non-Goals
 
