@@ -14,8 +14,12 @@ export function ipfsToHttp(uri: string) {
   return uri.startsWith('ipfs://') ? uri.replace('ipfs://', IPFS_GATEWAY) : uri
 }
 
+export function tokenIdToErc1155Hex(tokenId: bigint | number) {
+  return BigInt(tokenId).toString(16).padStart(64, '0')
+}
+
 export function expandTokenUri(template: string, tokenId: bigint | number) {
-  return template.replace('{id}', String(tokenId))
+  return template.replace('{id}', tokenIdToErc1155Hex(tokenId))
 }
 
 export function resolveImageUrl(uri: string) {

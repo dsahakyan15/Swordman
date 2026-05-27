@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { fetchTokenMetadata, ipfsToHttp, resetIpfsCaches } from './ipfsHelper'
+import { expandTokenUri, fetchTokenMetadata, ipfsToHttp, resetIpfsCaches } from './ipfsHelper'
 
 describe('ipfsHelper', () => {
   afterEach(() => {
@@ -10,6 +10,15 @@ describe('ipfsHelper', () => {
 
   it('converts ipfs URIs to the public gateway', () => {
     expect(ipfsToHttp('ipfs://QmHash/file.png')).toBe('https://ipfs.io/ipfs/QmHash/file.png')
+  })
+
+  it('expands {id} as a 64-character lowercase hex string for ERC-1155 metadata', () => {
+    expect(expandTokenUri('ipfs://QmMeta/{id}.json', 1)).toBe(
+      'ipfs://QmMeta/0000000000000000000000000000000000000000000000000000000000000001.json',
+    )
+    expect(expandTokenUri('ipfs://QmMeta/{id}.json', 15)).toBe(
+      'ipfs://QmMeta/000000000000000000000000000000000000000000000000000000000000000f.json',
+    )
   })
 
   it('fetches metadata, expands {id}, and normalizes the image URL', async () => {
@@ -27,7 +36,9 @@ describe('ipfsHelper', () => {
 
     const result = await fetchTokenMetadata('ipfs://QmMeta/{id}.json', 1)
 
-    expect(fetch).toHaveBeenCalledWith('https://ipfs.io/ipfs/QmMeta/1.json')
+    expect(fetch).toHaveBeenCalledWith(
+      'https://ipfs.io/ipfs/QmMeta/0000000000000000000000000000000000000000000000000000000000000001.json',
+    )
     expect(result.imageUrl).toBe('https://ipfs.io/ipfs/QmImage/coin.png')
   })
 
