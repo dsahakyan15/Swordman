@@ -1,6 +1,12 @@
+import { useNavigate } from 'react-router-dom'
+
 import { PixelButton } from '../../components/pixel/PixelButton'
+import { useWallet } from '../../web3/useWallet'
 
 export function HomePage() {
+  const navigate = useNavigate()
+  const { connect } = useWallet()
+
   return (
     <section className="flex min-h-[calc(100vh-72px)] items-center justify-center px-4 py-12 text-center md:px-8">
       <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center gap-5">
@@ -15,10 +21,10 @@ export function HomePage() {
           glass panels, and local-chain bidding.
         </p>
         <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-          <PixelButton variant="primary" fullWidth>
+          <PixelButton variant="primary" fullWidth onClick={() => navigate('/auction')}>
             Enter Game
           </PixelButton>
-          <PixelButton variant="secondary" fullWidth>
+          <PixelButton variant="secondary" fullWidth onClick={connect}>
             Connect Wallet
           </PixelButton>
         </div>
