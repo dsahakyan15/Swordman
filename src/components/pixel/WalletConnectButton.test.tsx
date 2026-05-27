@@ -1,6 +1,8 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
 
+import { PixelHeader } from './PixelHeader'
 import { WalletConnectButton } from './WalletConnectButton'
 
 describe('WalletConnectButton', () => {
@@ -42,5 +44,28 @@ describe('WalletConnectButton', () => {
     fireEvent.click(screen.getByRole('button', { name: /connect wallet/i }))
 
     expect(onConnect).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('PixelHeader', () => {
+  it('opens the mobile menu with a Portfolio link', () => {
+    render(
+      <MemoryRouter>
+        <PixelHeader
+          walletState={{ address: '', status: 'disconnected' }}
+          onConnect={vi.fn()}
+          onSwitchNetwork={vi.fn()}
+        />
+      </MemoryRouter>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: /open navigation menu/i }))
+
+    const mobileMenu = screen.getByRole('navigation', { name: /mobile navigation/i })
+
+    expect(within(mobileMenu).getByRole('link', { name: /portfolio/i })).toHaveAttribute(
+      'href',
+      '/portfolio',
+    )
   })
 })
