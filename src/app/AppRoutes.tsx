@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom'
 
 import { AuctionPage } from '../features/auction/AuctionPage'
 import { HomePage } from '../features/home/HomePage'
+import { PortfolioPage } from '../features/portfolio/PortfolioPage'
 import { AppShell } from './AppShell'
 
 export function AppRoutes() {
@@ -10,6 +11,7 @@ export function AppRoutes() {
       <Route element={<AppShell />}>
         <Route index element={<HomePage />} />
         <Route path="auction" element={<AuctionPage />} />
+        <Route path="portfolio" element={<PortfolioPage />} />
       </Route>
     </Routes>
   )

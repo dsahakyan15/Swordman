@@ -12,6 +12,10 @@ vi.mock('../features/auction/AuctionPage', () => ({
   AuctionPage: () => <h1>Auction House</h1>,
 }))
 
+vi.mock('../features/portfolio/PortfolioPage', () => ({
+  PortfolioPage: () => <h1>Portfolio</h1>,
+}))
+
 describe('AppRoutes', () => {
   it('renders the home page at /', () => {
     render(
@@ -39,6 +43,20 @@ describe('AppRoutes', () => {
       level: 1,
       name: 'Auction House',
     })
+
+    expect(shell).toContainElement(heading)
+    expect(screen.getByRole('main')).toBeInTheDocument()
+  })
+
+  it('renders the portfolio page at /portfolio', () => {
+    render(
+      <MemoryRouter initialEntries={['/portfolio']}>
+        <AppRoutes />
+      </MemoryRouter>,
+    )
+
+    const shell = screen.getByTestId('app-shell')
+    const heading = screen.getByRole('heading', { level: 1, name: 'Portfolio' })
 
     expect(shell).toContainElement(heading)
     expect(screen.getByRole('main')).toBeInTheDocument()
