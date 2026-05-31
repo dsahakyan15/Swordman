@@ -1,8 +1,8 @@
 import { BrowserProvider, Contract, JsonRpcProvider } from 'ethers'
 
-import { LOCAL_RPC_URL, auctionConfig, bankeerConfig } from '../config/contracts'
+import { rpcUrl, auctionConfig, bankeerConfig } from '../config/contracts'
 
-export const readProvider = new JsonRpcProvider(LOCAL_RPC_URL)
+export const readProvider = new JsonRpcProvider(rpcUrl)
 
 export async function getBrowserProvider() {
   if (!window.ethereum) {

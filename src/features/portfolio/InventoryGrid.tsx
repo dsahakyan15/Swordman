@@ -10,11 +10,11 @@ type InventoryGridProps = {
 export function InventoryGrid({ isLoading, items }: InventoryGridProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 6 }).map((_, index) => (
           <div
             key={index}
-            className="aspect-square rounded-none border border-indigo-400/30 bg-slate-950/50 p-3 backdrop-blur-sm"
+            className="aspect-square rounded-none bg-slate-950/50 p-5 backdrop-blur-sm"
           >
             <PixelLoader />
           </div>
@@ -32,7 +32,7 @@ export function InventoryGrid({ isLoading, items }: InventoryGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {items.map((item) => (
         <InventorySlot key={item.id} item={item} />
       ))}
