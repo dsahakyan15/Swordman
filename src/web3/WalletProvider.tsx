@@ -11,7 +11,7 @@ import {
 } from 'react'
 import { BrowserProvider } from 'ethers'
 
-import { LOCAL_CHAIN_ID, LOCAL_CHAIN_ID_HEX, LOCAL_RPC_URL } from '../config/contracts'
+import { LOCAL_CHAIN_ID, LOCAL_CHAIN_ID_HEX, rpcUrl } from '../config/contracts'
 
 export type WalletStatus = 'disconnected' | 'connecting' | 'connected' | 'wrong-network'
 
@@ -88,7 +88,7 @@ export function WalletProvider({ children }: PropsWithChildren) {
           {
             chainId: LOCAL_CHAIN_ID_HEX,
             chainName: 'Hardhat Localhost',
-            rpcUrls: [LOCAL_RPC_URL],
+            rpcUrls: [rpcUrl],
             nativeCurrency: {
               name: 'ETH',
               symbol: 'ETH',

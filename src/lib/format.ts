@@ -14,3 +14,16 @@ export function formatCountdown(secondsLeft: number) {
 
   return [hours, minutes, seconds].map((value) => String(value).padStart(2, '0')).join(':')
 }
+
+export function formatCompactNumber(number: bigint | number) {
+  const value = Number(number)
+  
+  if (value < 1000) {
+    return value.toString()
+  }
+
+  return new Intl.NumberFormat('en-US', {
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(value)
+}

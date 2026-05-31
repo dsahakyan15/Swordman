@@ -23,7 +23,7 @@ export function AuctionCard({
   onSettle,
 }: AuctionCardProps) {
   return (
-    <article className="grid gap-3 rounded-none border border-indigo-500/50 bg-black/60 p-4 text-white backdrop-blur-sm">
+    <article className="grid gap-3 rounded-none border border-indigo-500/50 bg-black/60 p-4 text-white backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(129,140,248,0.4)]">
       <div className="mx-auto aspect-square w-32 overflow-hidden rounded-none border border-pink-400/30 bg-slate-950/70 [image-rendering:pixelated]">
         {itemImageUrl ? (
           <img

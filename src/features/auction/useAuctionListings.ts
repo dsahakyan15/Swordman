@@ -22,9 +22,12 @@ export function useAuctionListings(refreshKey = 0) {
   useEffect(() => {
     let isMounted = true
 
-    async function load() {
+    async function load(isSilent = false) {
       try {
-        setState((current) => ({ ...current, isLoading: true, error: '' }))
+        if (!isSilent) {
+          setState((current) => ({ ...current, isLoading: true, error: '' }))
+        }
+        
         const contract = getReadAuctionContract()
         const nextAuctionId = Number(await contract.nextAuctionId())
         const nowSeconds = Math.floor(Date.now() / 1000)
@@ -59,19 +62,24 @@ export function useAuctionListings(refreshKey = 0) {
         }
       } catch (error) {
         if (isMounted) {
-          setState({
-            auctions: [],
+          setState((current) => ({
+            ...current,
             isLoading: false,
             error: error instanceof Error ? error.message : 'Failed to load auctions',
-          })
+          }))
         }
       }
     }
 
     void load()
 
+    const interval = setInterval(() => {
+      void load(true)
+    }, 10000)
+
     return () => {
       isMounted = false
+      clearInterval(interval)
     }
   }, [refreshKey])
 
