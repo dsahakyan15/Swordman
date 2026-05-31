@@ -35,7 +35,7 @@ export function AuctionCard({
       </div>
       <div className="flex items-center justify-between gap-3 text-xs uppercase tracking-[0.16em] text-purple-100">
         <span>{itemName}</span>
-        <span>{formatCountdown(auction.secondsLeft)}</span>
+        <span className="font-sans">{formatCountdown(auction.secondsLeft)}</span>
       </div>
       <div className="flex items-center justify-between gap-3 text-sm text-orange-100">
         <span className="inline-flex items-center gap-2">
@@ -44,7 +44,7 @@ export function AuctionCard({
           ) : (
             <span className="h-4 w-4 bg-orange-300" />
           )}
-          {auction.highestBid} COIN
+          <span className="font-sans">{auction.highestBid}</span> COIN
         </span>
         <span className="text-[11px] uppercase tracking-[0.16em] text-slate-200">
           {auction.action === 'settle' ? 'Settle' : 'Bid'}

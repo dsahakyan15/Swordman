@@ -22,9 +22,9 @@ export function InventorySlot({ item }: InventorySlotProps) {
       <div className="min-w-0 px-[20px] py-0 text-sm uppercase tracking-[0.12em]">
         <p className="truncate font-bold text-purple-100">{metadata.name}</p>
         <div className="flex items-center justify-between gap-2 px-[10px] py-[2px]">
-          <span className="text-base text-orange-100">x{balance.toString()}</span>
+          <span className="text-base text-orange-100 font-sans">x{balance.toString()}</span>
           <span 
-            className="text-xs text-orange-200/80" 
+            className="text-xs text-orange-200/80 font-sans" 
             title={`${price.toString()} COIN`}
           >
             {formatCompactNumber(price)} COIN

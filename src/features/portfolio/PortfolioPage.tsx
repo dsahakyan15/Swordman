@@ -47,7 +47,7 @@ export function PortfolioPage() {
           ) : (
             <span className="h-6 w-6 border border-orange-300/70 bg-orange-300/30 [image-rendering:pixelated]" />
           )}
-          <span>{inventory.coinBalance.toString()} COIN</span>
+          <span><span className="font-sans">{inventory.coinBalance.toString()}</span> COIN</span>
         </div>
       </div>
 
