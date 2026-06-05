@@ -55,6 +55,7 @@ describe('PixelHeader', () => {
           walletState={{ address: '', status: 'disconnected' }}
           onConnect={vi.fn()}
           onSwitchNetwork={vi.fn()}
+          onDisconnect={vi.fn()}
         />
       </MemoryRouter>,
     )
@@ -67,5 +68,42 @@ describe('PixelHeader', () => {
       'href',
       '/portfolio',
     )
+  })
+
+  it('closes the mobile menu when clicking outside it', () => {
+    render(
+      <MemoryRouter>
+        <PixelHeader
+          walletState={{ address: '', status: 'disconnected' }}
+          onConnect={vi.fn()}
+          onSwitchNetwork={vi.fn()}
+          onDisconnect={vi.fn()}
+        />
+      </MemoryRouter>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: /open navigation menu/i }))
+    fireEvent.mouseDown(document.body)
+
+    expect(screen.queryByRole('navigation', { name: /mobile navigation/i })).not.toBeInTheDocument()
+  })
+
+  it('shows a disconnect action when the wallet is connected', () => {
+    const onDisconnect = vi.fn()
+
+    render(
+      <MemoryRouter>
+        <PixelHeader
+          walletState={{ address: '0x1234567890abcdef', status: 'connected' }}
+          onConnect={vi.fn()}
+          onSwitchNetwork={vi.fn()}
+          onDisconnect={onDisconnect}
+        />
+      </MemoryRouter>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: /disconnect wallet/i }))
+
+    expect(onDisconnect).toHaveBeenCalledTimes(1)
   })
 })

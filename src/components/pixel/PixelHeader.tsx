@@ -1,13 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import type { WalletState } from '../../web3/WalletProvider'
+import { PixelButton } from './PixelButton'
 import { WalletConnectButton } from './WalletConnectButton'
 
 type PixelHeaderProps = {
   walletState: WalletState
   onConnect: () => void
   onSwitchNetwork: () => void
+  onDisconnect: () => void
 }
 
 const navigationLinks = [
@@ -20,11 +22,36 @@ export function PixelHeader({
   walletState,
   onConnect,
   onSwitchNetwork,
+  onDisconnect,
 }: PixelHeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const headerRef = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    if (!isMenuOpen) {
+      return
+    }
+
+    function handleDocumentMouseDown(event: MouseEvent) {
+      if (headerRef.current?.contains(event.target as Node)) {
+        return
+      }
+
+      setIsMenuOpen(false)
+    }
+
+    document.addEventListener('mousedown', handleDocumentMouseDown)
+
+    return () => {
+      document.removeEventListener('mousedown', handleDocumentMouseDown)
+    }
+  }, [isMenuOpen])
 
   return (
-    <header className="relative z-20 bg-gradient-to-b from-slate-950/70 to-transparent px-4 py-4 text-white md:px-8">
+    <header
+      ref={headerRef}
+      className="relative z-20 bg-gradient-to-b from-slate-950/70 to-transparent px-4 py-4 text-white md:px-8"
+    >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
         <Link
           to="/"
@@ -57,6 +84,16 @@ export function PixelHeader({
             onConnect={onConnect}
             onSwitchNetwork={onSwitchNetwork}
           />
+          {walletState.status === 'connected' ? (
+            <PixelButton
+              variant="danger"
+              className="px-3 py-2 text-xs"
+              onClick={onDisconnect}
+              aria-label="Disconnect wallet"
+            >
+              Exit
+            </PixelButton>
+          ) : null}
         </div>
       </div>
       {isMenuOpen ? (

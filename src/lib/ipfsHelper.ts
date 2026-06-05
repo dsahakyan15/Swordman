@@ -14,9 +14,8 @@ export function ipfsToHttp(uri: string) {
   return uri.startsWith('ipfs://') ? uri.replace('ipfs://', IPFS_GATEWAY) : uri
 }
 
-
 export function expandTokenUri(template: string, tokenId: bigint | number) {
-  return template.replace('{id}', (tokenId).toString())
+  return template.replace('{id}', tokenId.toString())
 }
 
 export function resolveImageUrl(uri: string) {

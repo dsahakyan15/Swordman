@@ -7,7 +7,7 @@ import { useWallet } from '../../web3/useWallet'
 export function HomePage() {
   const navigate = useNavigate()
   const { pushToast } = useToasts()
-  const { connect } = useWallet()
+  const { walletState,connect } = useWallet()
 
   async function handleConnect() {
     try {
@@ -34,9 +34,17 @@ export function HomePage() {
           <PixelButton variant="primary" fullWidth onClick={() => navigate('/auction')}>
             Enter Game
           </PixelButton>
+          {walletState.status === 'connected' ? (
+            <PixelButton variant="secondary" fullWidth onClick={() => navigate('/portfolio')}>
+              View Portfolio
+            </PixelButton>
+          ) : (
           <PixelButton variant="secondary" fullWidth onClick={() => void handleConnect()}>
             Connect Wallet
           </PixelButton>
+          )
+          }
+          
         </div>
         <div className="grid w-full max-w-sm grid-cols-3 gap-3">
           {Array.from({ length: 3 }).map((_, index) => (

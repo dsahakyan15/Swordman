@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   connect: vi.fn(),
   navigate: vi.fn(),
   pushToast: vi.fn(),
+  walletState: { address: '', status: 'disconnected' },
 }))
 
 vi.mock('react-router-dom', async () => {
@@ -22,6 +23,7 @@ vi.mock('react-router-dom', async () => {
 vi.mock('../../web3/useWallet', () => ({
   useWallet: () => ({
     connect: mocks.connect,
+    walletState: mocks.walletState,
   }),
 }))
 
@@ -36,6 +38,7 @@ describe('HomePage', () => {
     mocks.connect.mockReset()
     mocks.navigate.mockReset()
     mocks.pushToast.mockReset()
+    mocks.walletState = { address: '', status: 'disconnected' }
   })
 
   it('renders the hero copy, actions, and placeholder slots', () => {

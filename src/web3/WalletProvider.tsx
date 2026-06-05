@@ -23,6 +23,7 @@ export type WalletState = {
 type WalletContextValue = {
   walletState: WalletState
   connect: () => Promise<void>
+  disconnect: () => void
   switchToLocalhost: () => Promise<void>
   refreshWallet: () => Promise<void>
 }
@@ -102,6 +103,10 @@ export function WalletProvider({ children }: PropsWithChildren) {
     await syncFromProvider()
   }, [syncFromProvider])
 
+  const disconnect = useCallback(() => {
+    setWalletState(emptyWalletState)
+  }, [])
+
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       void syncFromProvider()
@@ -116,10 +121,11 @@ export function WalletProvider({ children }: PropsWithChildren) {
     () => ({
       walletState,
       connect,
+      disconnect,
       switchToLocalhost,
       refreshWallet: syncFromProvider,
     }),
-    [walletState, connect, switchToLocalhost, syncFromProvider],
+    [walletState, connect, disconnect, switchToLocalhost, syncFromProvider],
   )
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>

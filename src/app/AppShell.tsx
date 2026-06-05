@@ -16,7 +16,7 @@ export function AppShell() {
 }
 
 function ShellContent() {
-  const { walletState, connect, switchToLocalhost } = useWallet()
+  const { walletState, connect, disconnect, switchToLocalhost } = useWallet()
 
   return (
     <div
@@ -29,6 +29,7 @@ function ShellContent() {
       <PixelHeader
         walletState={walletState}
         onConnect={() => void connect()}
+        onDisconnect={disconnect}
         onSwitchNetwork={() => void switchToLocalhost()}
       />
       <main className="relative z-10 min-h-[calc(100vh-72px)] px-6 py-12">

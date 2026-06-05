@@ -1,15 +1,39 @@
 import { formatCompactNumber } from '../../lib/format'
 import type { PortfolioInventoryItem } from './usePortfolioInventory'
 
-type InventorySlotProps = {
-  item: PortfolioInventoryItem
+export type CreateAuctionValues = {
+  itemId: number
+  amount: number
+  startingBid: number
+  duration: number
 }
 
-export function InventorySlot({ item }: InventorySlotProps) {
+type InventorySlotProps = {
+  item: PortfolioInventoryItem
+  isSelected?: boolean
+  onSelect?: (item: PortfolioInventoryItem) => void
+}
+
+export function InventorySlot({
+  item,
+  isSelected = false,
+  onSelect,
+}: InventorySlotProps) {
   const { metadata, balance, price } = item
 
   return (
-    <article className="grid gap-1 rounded-none bg-[url('/borderStone.png')] bg-[length:100%_100%] bg-center bg-no-repeat p-5 text-white transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(129,140,248,0.4)] [image-rendering:pixelated]">
+    <button
+      type="button"
+      aria-label={`Select ${metadata.name}`}
+      aria-pressed={isSelected}
+      className={[
+        "grid w-full gap-2 rounded-none bg-[url('/borderStone.png')] bg-[length:100%_100%] bg-center bg-no-repeat p-5 text-left text-white transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_24px_rgba(251,191,36,0.38),0_0_20px_rgba(129,140,248,0.28)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200 [image-rendering:pixelated]",
+        isSelected
+          ? 'scale-[1.02] shadow-[0_0_24px_rgba(251,191,36,0.38),0_0_20px_rgba(129,140,248,0.28)]'
+          : '',
+      ].join(' ')}
+      onClick={() => onSelect?.(item)}
+    >
       <div className="aspect-square pt-[20px] overflow-hidden rounded-none  [image-rendering:pixelated]">
         {metadata.imageUrl ? (
           <img
@@ -20,7 +44,9 @@ export function InventorySlot({ item }: InventorySlotProps) {
         ) : null}
       </div>
       <div className="min-w-0 px-[20px] py-0 text-sm uppercase tracking-[0.12em]">
-        <p className="truncate font-bold text-purple-100">{metadata.name}</p>
+        <div className="flex min-w-0 items-start justify-between gap-2">
+          <p className="truncate font-bold text-purple-100">{metadata.name}</p>
+        </div>
         <div className="flex items-center justify-between gap-2 px-[10px] py-[2px]">
           <span className="text-base text-orange-100 font-sans">x{balance.toString()}</span>
           <span 
@@ -31,7 +57,6 @@ export function InventorySlot({ item }: InventorySlotProps) {
           </span>
         </div>
       </div>
-    </article>
+    </button>
   )
 }
-

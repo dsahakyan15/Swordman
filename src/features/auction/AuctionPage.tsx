@@ -4,19 +4,36 @@ import { fetchTokenMetadata } from '../../lib/ipfsHelper'
 import { getReadBankeerContract } from '../../web3/contracts'
 import { useWallet } from '../../web3/useWallet'
 import { AuctionCard } from './AuctionCard'
+import { BidModal } from './BidModal'
 import { useAuctionActions } from './useAuctionActions'
 import { useAuctionListings } from './useAuctionListings'
 import { useCoinMetadata } from './useCoinMetadata'
+import type { AuctionViewModel } from './types'
+
+function hasBidder(highestBidder: string) {
+  const addressBody = highestBidder.replace(/^0x/i, '')
+  return addressBody.length > 0 && /[1-9a-f]/i.test(addressBody)
+}
 
 export function AuctionPage() {
   const { walletState } = useWallet()
   const [refreshKey, setRefreshKey] = useState(0)
+  const [nowSeconds, setNowSeconds] = useState(() => Math.floor(Date.now() / 1000))
+  const [bidAuction, setBidAuction] = useState<AuctionViewModel | null>(null)
   const { auctions, isLoading, error } = useAuctionListings(refreshKey)
-  const { pendingAuctionId, bid, settle } = useAuctionActions(() =>
+  const { pendingAuctionId, bid, settle, closeAuction, prematureClose } = useAuctionActions(() =>
     setRefreshKey((value) => value + 1),
   )
   const coinMeta = useCoinMetadata()
   const [metaById, setMetaById] = useState<Record<number, { name: string; imageUrl: string }>>({})
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setNowSeconds(Math.floor(Date.now() / 1000))
+    }, 1000)
+
+    return () => window.clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     let isMounted = true
@@ -46,6 +63,12 @@ export function AuctionPage() {
     }
   }, [auctions])
 
+  const liveAuctions = auctions.map((auction) => ({
+    ...auction,
+    secondsLeft: Math.max(0, auction.timeEnd - nowSeconds),
+    action: auction.timeEnd <= nowSeconds ? ('settle' as const) : ('bid' as const),
+  }))
+
   return (
     <section className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 md:px-8">
       <div className="relative z-10 flex flex-wrap items-start justify-between gap-3 text-white">
@@ -59,7 +82,7 @@ export function AuctionPage() {
         </div>
         <div className="flex flex-wrap gap-3">
           <div className="rounded-none border border-indigo-400/40 bg-slate-950/60 px-4 py-3 backdrop-blur-sm">
-            Open lots: {auctions.length}
+            Open lots: {liveAuctions.length}
           </div>
           <div className="rounded-none border border-orange-400/40 bg-slate-950/60 px-4 py-3 backdrop-blur-sm">
             {walletState.address ? walletState.address : 'Wallet disconnected'}
@@ -69,11 +92,31 @@ export function AuctionPage() {
 
       {isLoading ? <p>Loading auctions...</p> : null}
       {error ? <p>{error}</p> : null}
-      {!isLoading && !error && auctions.length === 0 ? <p>No open auctions.</p> : null}
+      {!isLoading && !error && liveAuctions.length === 0 ? <p>No open auctions.</p> : null}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {auctions.map((auction) => {
+        {liveAuctions.map((auction) => {
           const itemMeta = metaById[auction.swordId]
+          const isOwner =
+            Boolean(walletState.address) &&
+            walletState.address.toLowerCase() === auction.owner.toLowerCase()
+          const isExpired = auction.action === 'settle'
+          const shouldShowPrematureClose = isOwner && !isExpired && hasBidder(auction.highestBidder)
+          const primaryActionLabel = isExpired ? 'Settle' : isOwner ? 'Cancel Auction' : 'Bid'
+          const primaryActionVariant = isExpired ? 'primary' : isOwner ? 'danger' : 'secondary'
+          const handlePrimaryAction = () => {
+            if (isExpired) {
+              void settle(auction.id)
+              return
+            }
+
+            if (isOwner) {
+              void closeAuction(auction.id)
+              return
+            }
+
+            setBidAuction(auction)
+          }
 
           return (
             <AuctionCard
@@ -83,12 +126,37 @@ export function AuctionPage() {
               itemImageUrl={itemMeta?.imageUrl ?? ''}
               coinImageUrl={coinMeta?.imageUrl ?? ''}
               isPending={pendingAuctionId === auction.id}
-              onBid={() => void bid(auction.id, auction.highestBid + 1, walletState.address)}
+              primaryActionLabel={primaryActionLabel}
+              primaryActionVariant={primaryActionVariant}
+              secondaryActionLabel={shouldShowPrematureClose ? 'Premature Close' : undefined}
+              secondaryActionVariant="primary"
+              onPrimaryAction={handlePrimaryAction}
+              onSecondaryAction={() => void prematureClose(auction.id)}
+              onBid={() => setBidAuction(auction)}
               onSettle={() => void settle(auction.id)}
             />
           )
         })}
       </div>
+
+      <BidModal
+        auction={bidAuction}
+        itemName={bidAuction ? metaById[bidAuction.swordId]?.name ?? `Item #${bidAuction.swordId}` : ''}
+        isOpen={bidAuction !== null}
+        isPending={pendingAuctionId === bidAuction?.id}
+        onClose={() => setBidAuction(null)}
+        onSubmit={async (amount) => {
+          if (!bidAuction || !walletState.address) {
+            return false
+          }
+
+          const isSuccessful = await bid(bidAuction.id, amount, walletState.address)
+          if (isSuccessful) {
+            setBidAuction(null)
+          }
+          return isSuccessful
+        }}
+      />
     </section>
   )
 }

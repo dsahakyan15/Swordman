@@ -1,12 +1,31 @@
+import { useState } from 'react'
+
 import { PixelButton } from '../../components/pixel/PixelButton'
-import { shortenAddress } from '../../lib/format'
+import { formatCompactNumber, shortenAddress } from '../../lib/format'
 import { useWallet } from '../../web3/useWallet'
+import { CreateAuctionModal } from './CreateAuctionModal'
+import type { CreateAuctionValues } from './InventorySlot'
 import { InventoryGrid } from './InventoryGrid'
-import { usePortfolioInventory } from './usePortfolioInventory'
+import { useCreateAuction } from './useCreateAuction'
+import { usePortfolioInventory, type PortfolioInventoryItem } from './usePortfolioInventory'
 
 export function PortfolioPage() {
   const { walletState, connect } = useWallet()
   const inventory = usePortfolioInventory(walletState.address)
+  const { pendingItemId, createAuction } = useCreateAuction(inventory.refresh)
+  const [selectedItemId, setSelectedItemId] = useState<number | null>(null)
+  const [auctionItem, setAuctionItem] = useState<PortfolioInventoryItem | null>(null)
+
+  function handleCreateAuction(values: CreateAuctionValues) {
+    void createAuction({
+      ...values,
+      userAddress: walletState.address,
+    })
+  }
+
+  function handleSelectItem(item: PortfolioInventoryItem) {
+    setSelectedItemId((current) => (current === item.id ? null : item.id))
+  }
 
   if (walletState.status !== 'connected') {
     return (
@@ -47,7 +66,9 @@ export function PortfolioPage() {
           ) : (
             <span className="h-6 w-6 border border-orange-300/70 bg-orange-300/30 [image-rendering:pixelated]" />
           )}
-          <span><span className="font-sans">{inventory.coinBalance.toString()}</span> COIN</span>
+          <span title={`${inventory.coinBalance.toString()} COIN`}>
+            <span className="font-sans">{formatCompactNumber(inventory.coinBalance)}</span> COIN
+          </span>
         </div>
       </div>
 
@@ -57,7 +78,22 @@ export function PortfolioPage() {
         </p>
       ) : null}
 
-      <InventoryGrid isLoading={inventory.isLoading} items={inventory.items} />
+      <InventoryGrid
+        isLoading={inventory.isLoading}
+        items={inventory.items}
+        pendingItemId={pendingItemId}
+        selectedItemId={selectedItemId}
+        onSelectItem={handleSelectItem}
+        onOpenCreateAuction={(item) => setAuctionItem(item)}
+      />
+
+      <CreateAuctionModal
+        item={auctionItem}
+        isOpen={auctionItem !== null}
+        isPending={pendingItemId === auctionItem?.id}
+        onClose={() => setAuctionItem(null)}
+        onSubmit={handleCreateAuction}
+      />
     </section>
   )
 }

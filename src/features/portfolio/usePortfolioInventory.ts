@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { COIN_ID, INVENTORY_ITEM_IDS } from '../../config/contracts'
 import { fetchTokenMetadata, type TokenMetadata } from '../../lib/ipfsHelper'
@@ -23,6 +23,10 @@ export type PortfolioInventoryState = {
   items: PortfolioInventoryItem[]
 }
 
+export type PortfolioInventoryResult = PortfolioInventoryState & {
+  refresh: () => void
+}
+
 const initialState: PortfolioInventoryState = {
   isLoading: false,
   error: '',
@@ -39,8 +43,10 @@ function fallbackMetadata(tokenId: number): TokenMetadata {
   }
 }
 
-export function usePortfolioInventory(account: string) {
+export function usePortfolioInventory(account: string): PortfolioInventoryResult {
   const [state, setState] = useState<PortfolioInventoryState>(initialState)
+  const [refreshKey, setRefreshKey] = useState(0)
+  const refresh = useCallback(() => setRefreshKey((current) => current + 1), [])
 
   useEffect(() => {
     if (!account) {
@@ -118,7 +124,7 @@ export function usePortfolioInventory(account: string) {
       isMounted = false
       clearInterval(interval)
     }
-  }, [account])
+  }, [account, refreshKey])
 
-  return state
+  return { ...state, refresh }
 }

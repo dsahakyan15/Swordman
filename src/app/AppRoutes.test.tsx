@@ -61,4 +61,18 @@ describe('AppRoutes', () => {
     expect(shell).toContainElement(heading)
     expect(screen.getByRole('main')).toBeInTheDocument()
   })
+
+  it('renders a not found page for unknown routes', () => {
+    render(
+      <MemoryRouter initialEntries={['/missing-route']}>
+        <AppRoutes />
+      </MemoryRouter>,
+    )
+
+    const shell = screen.getByTestId('app-shell')
+    const heading = screen.getByRole('heading', { level: 1, name: '404' })
+
+    expect(shell).toContainElement(heading)
+    expect(screen.getByRole('link', { name: /back home/i })).toBeInTheDocument()
+  })
 })

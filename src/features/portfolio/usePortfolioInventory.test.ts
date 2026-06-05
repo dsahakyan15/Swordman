@@ -6,6 +6,7 @@ import { usePortfolioInventory } from './usePortfolioInventory'
 
 const mocks = vi.hoisted(() => ({
   balanceOfBatch: vi.fn(),
+  getPriceBatch: vi.fn(),
   uri: vi.fn(),
   fetchTokenMetadata: vi.fn(),
 }))
@@ -13,6 +14,7 @@ const mocks = vi.hoisted(() => ({
 vi.mock('../../web3/contracts', () => ({
   getReadBankeerContract: () => ({
     balanceOfBatch: mocks.balanceOfBatch,
+    getPriceBatch: mocks.getPriceBatch,
     uri: mocks.uri,
   }),
 }))
@@ -26,6 +28,7 @@ describe('usePortfolioInventory', () => {
     const account = '0xabc'
     const tokenIds = [COIN_ID, ...INVENTORY_ITEM_IDS]
     mocks.balanceOfBatch.mockResolvedValue([100n, 0n, 2n, 0n, 5n])
+    mocks.getPriceBatch.mockResolvedValue([1n, 10n, 20n, 30n, 40n])
     mocks.uri.mockImplementation(async (id: number) => `ipfs://QmMeta/${id}/{id}.json`)
     mocks.fetchTokenMetadata.mockImplementation(async (_uri: string, id: number) => ({
       name: id === COIN_ID ? 'COIN' : `Sword ${id}`,
@@ -35,7 +38,7 @@ describe('usePortfolioInventory', () => {
 
     const { result } = renderHook(() => usePortfolioInventory(account))
 
-    await waitFor(() => expect(result.current.isLoading).toBe(false))
+    await waitFor(() => expect(result.current.coinBalance).toBe(100n))
 
     expect(mocks.balanceOfBatch).toHaveBeenCalledWith(
       tokenIds.map(() => account),

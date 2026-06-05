@@ -1,6 +1,6 @@
 import { PixelButton } from '../../components/pixel/PixelButton'
 import { PixelLoader } from '../../components/pixel/PixelLoader'
-import { formatCountdown } from '../../lib/format'
+import { formatCountdown, formatCompactNumber } from '../../lib/format'
 import type { AuctionViewModel } from './types'
 
 type AuctionCardProps = {
@@ -9,8 +9,14 @@ type AuctionCardProps = {
   itemImageUrl: string
   coinImageUrl: string
   isPending: boolean
+  primaryActionLabel?: string
+  primaryActionVariant?: 'primary' | 'secondary' | 'danger'
+  secondaryActionLabel?: string
+  secondaryActionVariant?: 'primary' | 'secondary' | 'danger' | 'ghost'
   onBid: () => void
   onSettle: () => void
+  onPrimaryAction?: () => void
+  onSecondaryAction?: () => void
 }
 
 export function AuctionCard({
@@ -19,12 +25,23 @@ export function AuctionCard({
   itemImageUrl,
   coinImageUrl,
   isPending,
+  primaryActionLabel,
+  primaryActionVariant,
+  secondaryActionLabel,
+  secondaryActionVariant = 'primary',
   onBid,
   onSettle,
+  onPrimaryAction,
+  onSecondaryAction,
 }: AuctionCardProps) {
+  const fallbackActionLabel = auction.action === 'settle' ? 'Settle' : 'Bid'
+  const actionLabel = primaryActionLabel ?? fallbackActionLabel
+  const actionVariant = primaryActionVariant ?? (auction.action === 'settle' ? 'primary' : 'secondary')
+  const handlePrimaryAction = onPrimaryAction ?? (auction.action === 'settle' ? onSettle : onBid)
+
   return (
-    <article className="grid gap-3 rounded-none border border-indigo-500/50 bg-black/60 p-4 text-white backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(129,140,248,0.4)]">
-      <div className="mx-auto aspect-square w-32 overflow-hidden rounded-none border border-pink-400/30 bg-slate-950/70 [image-rendering:pixelated]">
+    <article className="grid gap-2 rounded-none border border-indigo-500/50 bg-black/60 p-3 text-white backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(129,140,248,0.4)] sm:gap-3 sm:p-4">
+      <div className="mx-auto aspect-square w-24 overflow-hidden rounded-none border border-pink-400/30 bg-slate-950/70 [image-rendering:pixelated] sm:w-32">
         {itemImageUrl ? (
           <img
             src={itemImageUrl}
@@ -44,20 +61,30 @@ export function AuctionCard({
           ) : (
             <span className="h-4 w-4 bg-orange-300" />
           )}
-          <span className="font-sans">{auction.highestBid}</span> COIN
+          <span className="font-sans">{formatCompactNumber(auction.highestBid)}</span> COIN
         </span>
         <span className="text-[11px] uppercase tracking-[0.16em] text-slate-200">
-          {auction.action === 'settle' ? 'Settle' : 'Bid'}
+          {actionLabel}
         </span>
       </div>
       <PixelButton
-        variant={auction.action === 'settle' ? 'primary' : 'secondary'}
-        onClick={auction.action === 'settle' ? onSettle : onBid}
+        variant={actionVariant}
+        onClick={handlePrimaryAction}
         disabled={isPending}
         fullWidth
       >
-        {isPending ? <PixelLoader /> : auction.action === 'settle' ? 'Settle' : 'Bid'}
+        {isPending ? <PixelLoader /> : actionLabel}
       </PixelButton>
+      {secondaryActionLabel && onSecondaryAction ? (
+        <PixelButton
+          variant={secondaryActionVariant}
+          onClick={onSecondaryAction}
+          disabled={isPending}
+          fullWidth
+        >
+          {secondaryActionLabel}
+        </PixelButton>
+      ) : null}
     </article>
   )
 }

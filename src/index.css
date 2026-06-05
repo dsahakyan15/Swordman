@@ -33,3 +33,9 @@ body {
     transform: translateX(-3%);
   }
 }
+
+.auction-datetime-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(1) brightness(1.5);
+  opacity: 1;
+}
